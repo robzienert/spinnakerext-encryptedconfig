@@ -1,0 +1,27 @@
+buildscript {
+  ext {
+  }
+  repositories {
+    jcenter()
+  }
+  dependencies {
+  }
+}
+
+allprojects {
+  apply plugin: 'java'
+
+  configurations.all {
+    exclude group: 'javax.servlet', module: 'servlet-api'
+    exclude group: 'javax.servlet', module: 'javax.servlet-api'
+  }
+
+  group = "com.netflix.spinnaker.encryptedconfig"
+
+  test {
+    testLogging {
+      exceptionFormat = 'full'
+    }
+  }
+}
+
