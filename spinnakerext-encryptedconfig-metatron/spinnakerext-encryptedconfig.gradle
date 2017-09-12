@@ -1,0 +1,7 @@
+dependencies {
+  spinnaker.group('bootWeb')
+
+  testCompile spinnaker.dependency('groovy')
+  testCompile spinnaker.dependency('junit')
+  spinnaker.group('spockBase')
+}

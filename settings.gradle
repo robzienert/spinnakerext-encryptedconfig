@@ -1,6 +1,6 @@
-rootProject.name = 'spinnaker-encryptedconfig-extension'
+rootProject.name = 'spinnakerext'
 
-include 'spinnaker-encryptedconfig'
+include 'spinnakerext-encryptedconfig'
 
 def setBuildFile(project) {
   project.buildFileName = "${project.name}.gradle"

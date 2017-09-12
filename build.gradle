@@ -1,15 +1,45 @@
 buildscript {
-  ext {
-  }
   repositories {
+    maven { url 'http://dl.bintray.com/spinnaker/gradle' }
     jcenter()
   }
   dependencies {
+    classpath ('com.netflix.spinnaker.gradle:spinnaker-gradle-project:3.10.0') { transitive = false }
+    classpath 'org.yaml:snakeyaml:1.16'
   }
 }
 
 allprojects {
-  apply plugin: 'java'
+  repositories {
+    maven { url 'http://dl.bintray.com/spinnaker/spinnaker/' }
+    jcenter()
+  }
+
+  apply plugin: 'spinnaker.dependency'
+
+  ext {
+    spinnakerDependenciesVersion = project.hasProperty('spinnakerDependenciesVersion') ? project.property('spinnakerDependenciesVersion') : '0.102.0'
+  }
+
+  def checkLocalVersions = [spinnakerDependenciesVersion: spinnakerDependenciesVersion]
+  if (ext.has('versions')) {
+    def extVers = ext.get('versions')
+    if (extVers instanceof Map) {
+      checkLocalVersions.putAll(extVers)
+    }
+  }
+
+  def localVersions = checkLocalVersions.findAll { it.value.endsWith('-SNAPSHOT') }
+  if (localVersions) {
+    logger.info("Enabling mavenLocal repo for $localVersions")
+    repositories {
+      mavenLocal()
+    }
+  }
+
+  spinnaker {
+    dependenciesVersion = spinnakerDependenciesVersion
+  }
 
   configurations.all {
     exclude group: 'javax.servlet', module: 'servlet-api'
@@ -17,11 +47,11 @@ allprojects {
   }
 
   group = "com.netflix.spinnaker.encryptedconfig"
-
-  test {
-    testLogging {
-      exceptionFormat = 'full'
-    }
-  }
 }
 
+subprojects {
+  apply plugin: 'java'
+
+  sourceCompatibility = 1.8
+  targetCompatibility = 1.8
+}
